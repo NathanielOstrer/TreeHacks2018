@@ -18,8 +18,8 @@ def serial_in(resp_port, ard_port):
 			query_resp += '&carbonmonoxide=null&co2=null'
 		else:
 			query_resp += '&carbonmonoxide=' + tok_ard[0] + '&co2=' + tok_ard[1]
-		print("https://air-quality-195519.appspot.com", query_resp)
-		r = requests.get("https://air-quality-195519.appspot.com" + query_resp + '&location=null')
+		print("https://air-quality-195519.appspot.com", query_resp, '&location=null')
+		r = requests.get("https://air-quality-195519.appspot.com/insert" + query_resp + '&location=null')
 		# send to server here
 		time.sleep(5)
 
