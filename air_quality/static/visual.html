@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title> Air Quality Visualization </title>
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #002732;
+}
+
+div{
+  height:100vh;
+}
+
+
+</style>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<body>
+<div id="map" style="width: 100%; "></div>
+<script>
+window.initMap = function() {
+  var el = document.querySelector('#map');
+  var google = window.google;
+  // http://www.colourlovers.com/palette/937624/Dance_To_Forget
+  var colors = ['#E5E100','#DFC300','#DAA500', '#DAA500','#CF6900','#C94B00','#C42D00','#BF0F00'];
+  function SVGOverlay (map) {
+    this.map = map;
+    this.svg = null;
+    this.coords = [];
+    this.onPan = this.onPan.bind(this);
+    this.setMap(map);
+  }
+  SVGOverlay.prototype = new google.maps.OverlayView();
+  SVGOverlay.prototype.onAdd = function () {
+    this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    this.svg.style.position = 'absolute';
+    this.svg.style.top = 0;
+    this.svg.style.left = 0;
+    this.svg.style.width = '960px';
+    this.svg.style.height = '500px';
+    this.svg.style.pointerEvents = 'none';
+    var bounds = this.map.getBounds(),
+        center = bounds.getCenter(),
+        ne = bounds.getNorthEast(),
+        sw = bounds.getSouthWest();
+
+
+    l = [{"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 400.0, "location": "37.427995,-122.1742618", "datetime": "1518918287"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 401.0, "location": "37.427985,-122.1742778", "datetime": "1518918325"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 390.0, "location": "37.427998,-122.1742898", "datetime": "1518918366"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 398.0, "location": "37.427984,-122.1742608", "datetime": "1518918294"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427981,-122.1742558", "datetime": "1518918306"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.42798,-122.1742648", "datetime": "1518918309"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 390.0, "location": "37.427993,-122.1742948", "datetime": "1518918369"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 397.0, "location": "37.428017,-122.1742828", "datetime": "1518918336"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 394.0, "location": "37.428,-122.1742868", "datetime": "1518918341"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 401.0, "location": "37.427984,-122.1742608", "datetime": "1518918291"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 399.0, "location": "37.428002,-122.1742778", "datetime": "1518918330"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 404.0, "location": "37.42799,-122.1742538", "datetime": "1518918304"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 400.0, "location": "37.427987,-122.1742648", "datetime": "1518918298"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 398.0, "location": "37.428004,-122.1742798", "datetime": "1518918331"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 391.0, "location": "37.428004,-122.1742958", "datetime": "1518918357"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427976,-122.1742688", "datetime": "1518918310"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427976,-122.1742758", "datetime": "1518918319"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 393.0, "location": "37.428006,-122.1742958", "datetime": "1518918349"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 393.0, "location": "37.427998,-122.1742868", "datetime": "1518918345"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 388.0, "location": "37.428003,-122.1742968", "datetime": "1518918361"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 397.0, "location": "37.427984,-122.1742638", "datetime": "1518918295"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 395.0, "location": "37.428005,-122.1742868", "datetime": "1518918340"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 388.0, "location": "37.427999,-122.1742978", "datetime": "1518918362"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 389.0, "location": "37.427997,-122.1742928", "datetime": "1518918359"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427978,-122.1742688", "datetime": "1518918314"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 398.0, "location": "37.427996,-122.1742538", "datetime": "1518918277"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 396.0, "location": "37.428009,-122.1742798", "datetime": "1518918338"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 388.0, "location": "37.427998,-122.1742968", "datetime": "1518918360"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 400.0, "location": "37.427988,-122.1742798", "datetime": "1518918326"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 398.0, "location": "37.427994,-122.1742538", "datetime": "1518918276"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427996,-122.1742648", "datetime": "1518918285"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 403.0, "location": "37.427985,-122.1742578", "datetime": "1518918305"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427975,-122.1742738", "datetime": "1518918317"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 397.0, "location": "37.427989,-122.1742508", "datetime": "1518918275"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427988,-122.1742558", "datetime": "1518918290"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 401.0, "location": "37.427983,-122.1742588", "datetime": "1518918307"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 399.0, "location": "37.428003,-122.1742518", "datetime": "1518918280"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 401.0, "location": "37.427991,-122.1742628", "datetime": "1518918286"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 391.0, "location": "37.428005,-122.1743048", "datetime": "1518918351"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 401.0, "location": "37.427992,-122.1742548", "datetime": "1518918289"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 401.0, "location": "37.427976,-122.1742768", "datetime": "1518918322"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 398.0, "location": "37.428007,-122.1742848", "datetime": "1518918332"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 396.0, "location": "37.42801,-122.1742828", "datetime": "1518918339"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 397.0, "location": "37.428,-122.1742518", "datetime": "1518918278"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 404.0, "location": "37.427992,-122.1742598", "datetime": "1518918302"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 401.0, "location": "37.427984,-122.1742638", "datetime": "1518918299"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 400.0, "location": "37.427995,-122.1742568", "datetime": "1518918288"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 392.0, "location": "37.428003,-122.1742928", "datetime": "1518918348"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427979,-122.1742648", "datetime": "1518918313"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427974,-122.1742738", "datetime": "1518918320"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 391.0, "location": "37.428001,-122.1743018", "datetime": "1518918355"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 403.0, "location": "37.427989,-122.1742638", "datetime": "1518918301"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 399.0, "location": "37.428007,-122.1742888", "datetime": "1518918334"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 392.0, "location": "37.428002,-122.1742988", "datetime": "1518918356"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 393.0, "location": "37.428001,-122.1742888", "datetime": "1518918347"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 400.0, "location": "37.428006,-122.1742548", "datetime": "1518918282"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 401.0, "location": "37.427972,-122.1742738", "datetime": "1518918321"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 394.0, "location": "37.427994,-122.1742918", "datetime": "1518918344"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 390.0, "location": "37.427994,-122.1742918", "datetime": "1518918367"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 393.0, "location": "37.427997,-122.1742888", "datetime": "1518918342"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 396.0, "location": "37.427989,-122.1742468", "datetime": "1518918274"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427988,-122.1742608", "datetime": "1518918300"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 399.0, "location": "37.427985,-122.1742608", "datetime": "1518918297"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 401.0, "location": "37.42798,-122.1742638", "datetime": "1518918308"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 398.0, "location": "37.428004,-122.1742548", "datetime": "1518918279"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 392.0, "location": "37.428003,-122.1742898", "datetime": "1518918346"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 391.0, "location": "37.427994,-122.1742908", "datetime": "1518918368"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 399.0, "location": "37.428008,-122.1742568", "datetime": "1518918281"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 400.0, "location": "37.427981,-122.1742558", "datetime": "1518918292"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 400.0, "location": "37.427978,-122.1742808", "datetime": "1518918323"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.42797,-122.1742688", "datetime": "1518918316"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 400.0, "location": "37.428001,-122.1742598", "datetime": "1518918283"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 403.0, "location": "37.427979,-122.1742768", "datetime": "1518918318"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 397.0, "location": "37.428013,-122.1742818", "datetime": "1518918337"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 393.0, "location": "37.427999,-122.1742888", "datetime": "1518918343"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 399.0, "location": "37.427984,-122.1742578", "datetime": "1518918293"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 399.0, "location": "37.427991,-122.1742818", "datetime": "1518918327"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 390.0, "location": "37.427999,-122.1742928", "datetime": "1518918358"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 396.0, "location": "37.427986,-122.1742498", "datetime": "1518918272"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427981,-122.1742668", "datetime": "1518918311"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 401.0, "location": "37.427999,-122.1742628", "datetime": "1518918284"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427973,-122.1742648", "datetime": "1518918315"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 398.0, "location": "37.428012,-122.1742878", "datetime": "1518918335"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 392.0, "location": "37.42801,-122.1743008", "datetime": "1518918350"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 396.0, "location": "37.427987,-122.1742518", "datetime": "1518918273"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 389.0, "location": "37.428,-122.1742948", "datetime": "1518918365"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 402.0, "location": "37.427982,-122.1742628", "datetime": "1518918312"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 398.0, "location": "37.427989,-122.1742658", "datetime": "1518918296"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 391.0, "location": "37.428001,-122.1742998", "datetime": "1518918353"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 401.0, "location": "37.427982,-122.1742768", "datetime": "1518918324"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 387.0, "location": "37.427995,-122.1742938", "datetime": "1518918363"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 396.0, "location": "37.42799,-122.1742448", "datetime": "1518918271"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 389.0, "location": "37.427998,-122.1742988", "datetime": "1518918370"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 392.0, "location": "37.427997,-122.1742998", "datetime": "1518918354"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 399.0, "location": "37.428005,-122.1742848", "datetime": "1518918333"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 400.0, "location": "37.427999,-122.1742728", "datetime": "1518918329"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 399.0, "location": "37.427995,-122.1742778", "datetime": "1518918328"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 404.0, "location": "37.427995,-122.1742568", "datetime": "1518918303"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 390.0, "location": "37.428003,-122.1742998", "datetime": "1518918352"}, {"carbonmonoxide": 0.0, "respiratoryirritants": 0.0, "co2": 388.0, "location": "37.427997,-122.1742978", "datetime": "1518918364"}]
+
+    for (var i = 0; i < 100; i++) {
+      this.coords.push({
+        id: i,
+        color: colors[(l[i]["co2"] - 387) % colors.length],
+        latLng: new google.maps.LatLng(
+          parseFloat(l[i]["location"].split(",")[0]),
+          parseFloat(l[i]["location"].split(",")[1])
+        )
+      });
+    }
+    var proj = this.getProjection();
+    d3.select(this.svg)
+        .attr('width', 960)
+        .attr('height', 500)
+      .append('g')
+        .attr('class', 'coords')
+        .selectAll('circle')
+        .data(this.coords, (d) => d.id)
+        .enter().append('circle')
+          .attr('cx', (d) => proj.fromLatLngToContainerPixel(d.latLng).x)
+          .attr('cy', (d) => proj.fromLatLngToContainerPixel(d.latLng).y)
+          .attr('r', 8)
+          .attr('fill', (d) => d.color);
+    this.onPan();
+    document.body.appendChild(this.svg);
+    this.map.addListener('center_changed', this.onPan);
+  };
+  SVGOverlay.prototype.onPan = function () {
+    var proj = this.getProjection();
+    d3.select(this.svg)
+      .select('.coords')
+      .selectAll('circle')
+      .data(this.coords)
+        .attr('cx', (d) => proj.fromLatLngToContainerPixel(d.latLng).x)
+        .attr('cy', (d) => proj.fromLatLngToContainerPixel(d.latLng).y);
+  };
+  SVGOverlay.prototype.onRemove = function () {
+    this.map.removeListener('center_changed', this.onPan);
+    this.svg.parentNode.removeChild(this.svg);
+    this.svg = null;
+  };
+  SVGOverlay.prototype.draw = function () {
+    console.log('draw');
+  };
+  var map = new google.maps.Map(el, {
+    center: new google.maps.LatLng(37.427991,-122.1742418),
+    zoom: 20,
+    disableDefaultUI: true,
+    backgroundColor: '#002732',
+    gestureHandling: 'greedy',
+    styles: [
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#bdbdbd"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.neighborhood",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#ffffff"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dadada"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#c9c9c9"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#59a9ff"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  }
+]
+  });
+  
+  var overlay = new SVGOverlay(map);
+};
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3&amp;libraries=places&amp;key=AIzaSyC62R0j23s1c-JzP6Gd3Q7UC5mDykuG-gc&amp;callback=initMap"></script>
+</body>
