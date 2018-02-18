@@ -12,7 +12,7 @@ def serial_in(resp_port, ard_port):
 		cur_time = time.time()
 		query_resp = line_to_query(str(line_resp, 'utf-8'), cur_time)
 		tok_ard = line_ard.split(' ')
-		query_resp += "&carbonmonoxide=" + tok_ard[0] + "&co2=" + tok_ard[1]
+		query_resp += '&carbonmonoxide=' + tok_ard[0] + '&co2=' + tok_ard[1]
 		# send to server here
 		time.sleep(5)
 
@@ -35,10 +35,15 @@ def line_to_query(line, read_time):
 	dict['SecTime'] = read_time
 	dict['DateTime'] = time.ctime(read_time).replace(' ', '_')
 	'''
-	query = '?'
+	
+	ppb = tok[1]
+	sectime = read_time
+	return '?respiratoryirritants=' + ppb + '&datetime=' + read_time
+	'''
 	for k, v in dict.items():
 		query += k + '=' + str(v) + '&'
 	return query[:-1]
+	'''
 
 def main():
 	#print(line_to_query('110816030320, 107, 25, 21, 32598, 26884, 14454, 00, 00, 01, 49', time.time()))
