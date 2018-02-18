@@ -14,7 +14,10 @@ def serial_in(resp_port, ard_port):
 		cur_time = time.time()
 		query_resp = line_to_query(str(line_resp, 'utf-8'), cur_time)
 		tok_ard = line_ard.split(' ')
-		query_resp += '&carbonmonoxide=' + tok_ard[0] + '&co2=' + tok_ard[1]
+		if tok_ard[0] == '':
+			query_resp += '&carbonmonoxide=null&co2=null'
+		else:
+			query_resp += '&carbonmonoxide=' + tok_ard[0] + '&co2=' + tok_ard[1]
 		print("https://air-quality-195519.appspot.com", query_resp)
 		r = requests.get("https://air-quality-195519.appspot.com" + query_resp)
 		# send to server here
@@ -26,7 +29,7 @@ def line_to_query(line, read_time):
 	# '110816030320, 107, 25, 21, 32598, 26884, 14454, 00, 00, 01, 49'	
 	print(line == '')
 	if line == '':
-		return ''
+		return '?respiratoryirritants=null&datetime=' + str(read_time)
 	tok = line.split(', ')
 	'''
 	dict = {'PPB' : 0, 'TEMP' : 0, 'RH' : 0, 'RawSensor' : 0, 'TempDigital' : 0, 'RHDigital' : 0, 'SecTime' : 0, 'DateTime' : ''}
