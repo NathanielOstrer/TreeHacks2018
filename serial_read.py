@@ -55,8 +55,8 @@ def line_to_query(line, read_time):
 
 def main():
 	#print(line_to_query('110816030320, 107, 25, 21, 32598, 26884, 14454, 00, 00, 01, 49', time.time()))
-	#serial_in('/dev/ttyUSB0', '/dev/ttyACM0')
-	serial_in('/dev/cu.SLAB_USBtoUART', '/dev/cu.usbmodem1421')
+	serial_in('/dev/ttyUSB0', '/dev/ttyACM0')
+	#serial_in('/dev/cu.SLAB_USBtoUART', '/dev/cu.usbmodem1421')
 
 if __name__ == '__main__':
 	main()
