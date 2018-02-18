@@ -195,7 +195,7 @@ def insert_data():
 	location_string = request.args.get('location')
 
 	# parse datetime
-	datetime_val = datetime.fromtimestamp(int(request.args.get('datetime')))
+	datetime_val = datetime.fromtimestamp(int(float(request.args.get('datetime'))))
 
 
 	with client.transaction():
