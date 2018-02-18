@@ -48,7 +48,7 @@ def line_to_query(line, read_time):
 	
 	ppb = tok[1]
 	sectime = read_time
-	print('?respiratoryirritants=', str(ppb), '&datetime=', str(read_time), '*****')
+	#print('?respiratoryirritants=', str(ppb), '&datetime=', str(read_time), '*****')
 	return '?respiratoryirritants=' + str(ppb) + '&datetime=' + str(read_time)
 	'''
 	for k, v in dict.items():

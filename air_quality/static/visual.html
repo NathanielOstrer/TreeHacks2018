@@ -522,13 +522,13 @@ setInterval(function () {
     dataset[dataset.length] = {"y": Math.random()};
     dataset2[dataset2.length] = {"y": Math.random()};
     dataset3[dataset3.length] = {"y": Math.random()};
-    update(dataset, dataset2, dataset3)
+    update(dataset, dataset2, dataset3, 0, dataset.length - 1)
 }, 2000)
 //update(dataset);
 //setTimeout(update(dataset), 2000);
 
 
-function update(dset, dset2, dset3) {
+function update(dset, dset2, dset3, start_ind, end_ind) {
 
     /*
     var xScale = d3.scaleLinear()
@@ -547,8 +547,8 @@ function update(dset, dset2, dset3) {
     .y(function(d) { return yScale(d.y); }) // set the y values for the line generator 
     .curve(d3.curveMonotoneX) // apply smoothing to the line*/
     // 9. Append the path, bind the data, and call the line generator 
-
-    xScale.domain([0, dset.length - 1]);
+    console.log(end_ind)
+    xScale.domain([start_ind, end_ind]);
     line1.x(function(d, i) { return xScale(i); }); // set the x values for the line generator
     line2.x(function(d, i) { return xScale(i); });
     line3.x(function(d, i) { return xScale(i); });
