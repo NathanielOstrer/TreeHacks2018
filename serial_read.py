@@ -22,7 +22,10 @@ def serial_in(resp_port, ard_port):
 			query_resp += '&carbonmonoxide=' + tok_ard[0] + '&co2=' + tok_ard[1]
 		final_str = "https://air-quality-195519.appspot.com/insert" + query_resp + '&location=0,0'
 		print(final_str)
-		r = requests.get(final_str)
+		try:
+			r = requests.get(final_str)
+		except:
+			print("Request error")
 		# send to server here
 		time.sleep(5)
 
