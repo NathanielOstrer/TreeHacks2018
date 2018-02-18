@@ -1,18 +1,22 @@
 import serial
 import time
+import requests
 
 def serial_in(resp_port, ard_port):
 	ser_resp = serial.Serial(resp_port, 9600, timeout=2)
 	ser_ard = serial.Serial(ard_port, 9600, timeout=2)
 	ser_resp.write(b'c')
-
+	print(ser_resp.readline(), '***')
 	while True:
 		line_resp = ser_resp.readline()
-		line_ard =str(ser_ard.readline(), 'utf-8').replace('\r', '').replace('\n', '')
+		line_ard = ser_ard.readline()
+		line_ard = str(line_ard, 'utf-8').replace('\r', '').replace('\n', '')
 		cur_time = time.time()
 		query_resp = line_to_query(str(line_resp, 'utf-8'), cur_time)
 		tok_ard = line_ard.split(' ')
 		query_resp += '&carbonmonoxide=' + tok_ard[0] + '&co2=' + tok_ard[1]
+		print("https://air-quality-195519.appspot.com", query_resp)
+		r = requests.get("https://air-quality-195519.appspot.com" + query_resp)
 		# send to server here
 		time.sleep(5)
 
@@ -38,7 +42,8 @@ def line_to_query(line, read_time):
 	
 	ppb = tok[1]
 	sectime = read_time
-	return '?respiratoryirritants=' + ppb + '&datetime=' + read_time
+	print('?respiratoryirritants=', str(ppb), '&datetime=', str(read_time), '*****')
+	return '?respiratoryirritants=' + str(ppb) + '&datetime=' + str(read_time)
 	'''
 	for k, v in dict.items():
 		query += k + '=' + str(v) + '&'
@@ -47,7 +52,8 @@ def line_to_query(line, read_time):
 
 def main():
 	#print(line_to_query('110816030320, 107, 25, 21, 32598, 26884, 14454, 00, 00, 01, 49', time.time()))
-	serial_in('/dev/cu.SLAB_USBtoUART', '/dev/ttyACM0')
+	#serial_in('/dev/ttyUSB0', '/dev/ttyACM0')
+	serial_in('/dev/cu.SLAB_USBtoUART', '/dev/cu.usbmodem1421')
 
 if __name__ == '__main__':
 	main()
