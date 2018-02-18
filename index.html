@@ -42,6 +42,7 @@
 </style>
 <!-- Body tag is where we will append our SVG and SVG objects-->
 <body>
+    <div id="graph" style="width: 50%; float: right;"></div>
 </body>
 
 <!-- Load in the d3 library -->
@@ -49,8 +50,8 @@
 <script>
 
 // 2. Use the margin convention practice 
-var margin = {top: 50, right: 50, bottom: 50, left: 50}
-  , width = window.innerWidth - margin.left - margin.right // Use the window's width 
+var margin = {top: 50, right: 0, bottom: 50, left: 50}
+  , width = window.innerWidth / 2 - margin.left - margin.right // Use the window's width 
   , height = window.innerHeight - margin.top - margin.bottom; // Use the window's height
 
 // The number of datapoints
@@ -78,17 +79,20 @@ var dataset2 = d3.range(n).map(function(d) { return {"y": d3.randomUniform(1)() 
 var dataset3 = d3.range(n).map(function(d) { return {"y": d3.randomUniform(1)() } })
 
 // 1. Add the SVG to the page and employ #2
-var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
+//width = window.innerWidth / 2;
+console.log(width)
+var svg = d3.select("#graph").append("svg")
+    .attr("width", width)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+/*
 var svg_bar = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    */
 
 // 3. Call the x axis in a group tag
 var x_axis = svg.append("g")
@@ -111,10 +115,6 @@ setInterval(function () {
 //update(dataset);
 //setTimeout(update(dataset), 2000);
 
-function updateBars(recent_data) {
-
-
-}
 
 function update(dset, dset2, dset3) {
 
