@@ -3,6 +3,10 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /visual.html
+  static_files: static/visual.html
+  upload: static/visual.html
+
 - url: /.*
   script: main.app
 
