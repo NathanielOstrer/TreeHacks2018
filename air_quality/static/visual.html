@@ -12,6 +12,10 @@ div{
   height:100vh;
 }
 
+.legend {
+  font-family: avenir;
+}
+
 .line1 {
     fill: none;
     stroke: #ffab00;
@@ -19,7 +23,7 @@ div{
 }
 
 .line1:hover {
-  stroke: #ffffff;
+  stroke-width: 5;
 }
 
 .line2 {
@@ -29,7 +33,7 @@ div{
 }
 
 .line2:hover {
-  stroke: #ffffff;
+  stroke-width: 5;
 }
 
 
@@ -40,7 +44,7 @@ div{
 }
 
 .line3:hover {
-  stroke: #ffffff;
+  stroke-width: 5;
 }
 
 
@@ -73,8 +77,24 @@ div{
   font-family: avenir;
 }
 
+#axis1 text{
+  fill: #ffab00;
+  font-family: avenir;
+}
+
+#axis2 text{
+  fill: #4286f4;
+  font-family: avenir;
+}
+
+#axis3 text{
+  fill: #0cb745;
+  font-family: avenir;
+}
+
 </style>
 <script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="d3.legend.js"></script>
 <body>
 <div id="map" style="width: 50%; float: left;"></div>
 <div id="graph" style="width: 50%; float: right;"></div>
@@ -398,16 +418,35 @@ var xScale = d3.scaleLinear()
     .domain([0, n-1]) // input
     .range([0, width]); // output
 
-// 6. Y scale will use the randomly generate number 
+// 6. Y scale will use the randomly generate number
+/* 
 var yScale = d3.scaleLinear()
     .domain([0, 5]) // input 
     .range([height, 0]); // output 
+*/
+var yScale1 = d3.scaleLinear()
+    .domain([0, 10]) // input 
+    .range([height, 0]); // output 
+var yScale2 = d3.scaleLinear()
+    .domain([0, 5]) // input 
+    .range([height, 0]); // output 
+var yScale3 = d3.scaleLinear()
+    .domain([0, 1]) // input 
+    .range([height, 0]); // output 
 
 // 7. d3's line generator
-var line = d3.line()
+var line1 = d3.line()
     .x(function(d, i) { return xScale(i); }) // set the x values for the line generator
-    .y(function(d) { return yScale(d.y); }) // set the y values for the line generator 
-    .curve(d3.curveMonotoneX) // apply smoothing to the line
+    .y(function(d) { return yScale1(d.y); }) // set the y values for the line generator 
+    .curve(d3.curveMonotoneX); // apply smoothing to the line
+var line2 = d3.line()
+    .x(function(d, i) { return xScale(i); }) // set the x values for the line generator
+    .y(function(d) { return yScale2(d.y); }) // set the y values for the line generator 
+    .curve(d3.curveMonotoneX);
+var line3 = d3.line()
+    .x(function(d, i) { return xScale(i); }) // set the x values for the line generator
+    .y(function(d) { return yScale3(d.y); }) // set the y values for the line generator 
+    .curve(d3.curveMonotoneX);
 
 // 8. An array of objects of length N. Each object has key -> value pair, the key being "y" and the value is a random number
 var dataset = d3.range(n).map(function(d) { return {"y": d3.randomUniform(1)() } })
@@ -422,6 +461,29 @@ var svg = d3.select("#graph").append("svg")
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+svg.append("text")
+  .attr("x", function() {return 20;})
+  .attr("y", function() {return 20;})
+  .attr("dy", "0em")
+  .style("fill", "#ffab00")
+  .attr("class", "legend")
+  .text("blah");
+svg.append("text")
+  .attr("x", function() {return 20;})
+  .attr("y", function() {return 20;})
+  .attr("dy", "1em")
+  .style("fill", "#4286f4")
+  .attr("class", "legend")
+  .text("blah");
+svg.append("text")
+  .attr("x", function() {return 20;})
+  .attr("y", function() {return 20;})
+  .attr("dy", "2em")
+  .style("fill", "#0cb745")
+  .attr("class", "legend")
+  .text("blah");
+
 /*
 var svg_bar = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -439,7 +501,21 @@ var x_axis = svg.append("g")
 // 4. Call the y axis in a group tag
 var lines = svg.append("g")
     .attr("class", "axis")
-    .call(d3.axisLeft(yScale)); // Create an axis component with d3.axisLeft
+    .attr("id", "axis1")
+    .style("opacity", 0)
+    .call(d3.axisLeft(yScale1)); // Create an axis component with d3.axisLeft
+
+var lines2 = svg.append("g")
+    .attr("class", "axis")
+    .attr("id", "axis2")
+    .style("opacity", 0)
+    .call(d3.axisLeft(yScale2)); // Create an axis component with d3.axisLeft
+
+var lines3 = svg.append("g")
+    .attr("class", "axis")
+    .attr("id", "axis3")
+    .style("opacity", 0)
+    .call(d3.axisLeft(yScale3)); // Create an axis component with d3.axisLeft
 
 //var ind = 0;
 setInterval(function () {
@@ -454,6 +530,7 @@ setInterval(function () {
 
 function update(dset, dset2, dset3) {
 
+    /*
     var xScale = d3.scaleLinear()
     .domain([0, dset.length - 1]) // input
     .range([0, width]); // output
@@ -461,12 +538,20 @@ function update(dset, dset2, dset3) {
     var yScale = d3.scaleLinear()
     .domain([0, 5]) // input 
     .range([height, 0]); // output 
-
+    var yScale1 = d3.scaleLinear()
+    .domain([0, 10]) // input 
+    .range([height, 0]); // output */
+    /*
     var line = d3.line()
     .x(function(d, i) { return xScale(i); }) // set the x values for the line generator
     .y(function(d) { return yScale(d.y); }) // set the y values for the line generator 
-    .curve(d3.curveMonotoneX) // apply smoothing to the line
+    .curve(d3.curveMonotoneX) // apply smoothing to the line*/
     // 9. Append the path, bind the data, and call the line generator 
+
+    xScale.domain([0, dset.length - 1]);
+    line1.x(function(d, i) { return xScale(i); }); // set the x values for the line generator
+    line2.x(function(d, i) { return xScale(i); });
+    line3.x(function(d, i) { return xScale(i); });
 
     d3.selectAll(".line1").remove();
     d3.selectAll(".line2").remove();
@@ -475,18 +560,54 @@ function update(dset, dset2, dset3) {
     lines = svg.append("path")
         .datum(dset) // 10. Binds data to the line 
         .attr("class", "line1") // Assign a class for styling 
-        .attr("d", line); // 11. Calls the line generator */
+        .attr("d", line1) // 11. Calls the line generator */
+          .on("mouseover", function(){
+            //console.log("click")
+            d3.select("#axis1").style("opacity", 1);
+            d3.select("#axis2").style("opacity", 0);
+            d3.select("#axis3").style("opacity", 0);
+          })
+          /*.on("mouseout", function(){
+            //console.log("click")
+            d3.select("#axis1").style("opacity", 1);
+            d3.select("#axis2").style("opacity", 1);
+            d3.select("#axis3").style("opacity", 1);
+          });*/
 
     lines2 = svg.append("path")
     .datum(dset2) // 10. Binds data to the line 
     .attr("class", "line2") // Assign a class for styling 
-    .attr("d", line); // 11. Calls the line generator */
+    .attr("d", line2) // 11. Calls the line generator */
+      .on("mouseover", function(){
+            //console.log("click")
+            d3.select("#axis1").style("opacity", 0);
+            d3.select("#axis2").style("opacity", 1);
+            d3.select("#axis3").style("opacity", 0);
+          })
+          /*.on("mouseout", function(){
+            //console.log("click")
+            d3.select("#axis1").style("opacity", 1);
+            d3.select("#axis2").style("opacity", 1);
+            d3.select("#axis3").style("opacity", 1);
+          });*/
 
 
     lines3 = svg.append("path")
     .datum(dset3) // 10. Binds data to the line 
     .attr("class", "line3") // Assign a class for styling 
-    .attr("d", line); // 11. Calls the line generator */
+    .attr("d", line3) // 11. Calls the line generator */
+      .on("mouseover", function(){
+            //console.log("click")
+            d3.select("#axis1").style("opacity", 0);
+            d3.select("#axis2").style("opacity", 0);
+            d3.select("#axis3").style("opacity", 1);
+          })
+          /*.on("mouseout", function(){
+            //console.log("click")
+            d3.select("#axis1").style("opacity", 1);
+            d3.select("#axis2").style("opacity", 1);
+            d3.select("#axis3").style("opacity", 1);
+          });*/
 
 
     // 12. Appends a circle for each datapoint 
