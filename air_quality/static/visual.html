@@ -98,6 +98,13 @@ div{
 <body>
 <div id="map" style="width: 50%; float: left;"></div>
 <div id="graph" style="width: 50%; float: right;"></div>
+
+<script
+  src="http://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+
 <script>
 window.initMap = function() {
   var el = document.querySelector('#map');
@@ -425,13 +432,13 @@ var yScale = d3.scaleLinear()
     .range([height, 0]); // output 
 */
 var yScale1 = d3.scaleLinear()
-    .domain([0, 10]) // input 
+    .domain([0, 1200]) // input 
     .range([height, 0]); // output 
 var yScale2 = d3.scaleLinear()
-    .domain([0, 5]) // input 
+    .domain([0, 200]) // input 
     .range([height, 0]); // output 
 var yScale3 = d3.scaleLinear()
-    .domain([0, 1]) // input 
+    .domain([-1000, 1000]) // input 
     .range([height, 0]); // output 
 
 // 7. d3's line generator
@@ -468,21 +475,21 @@ svg.append("text")
   .attr("dy", "0em")
   .style("fill", "#ffab00")
   .attr("class", "legend")
-  .text("blah");
+  .text("CO2");
 svg.append("text")
   .attr("x", function() {return 20;})
   .attr("y", function() {return 20;})
   .attr("dy", "1em")
   .style("fill", "#4286f4")
   .attr("class", "legend")
-  .text("blah");
+  .text("Carbon Monoxide");
 svg.append("text")
   .attr("x", function() {return 20;})
   .attr("y", function() {return 20;})
   .attr("dy", "2em")
   .style("fill", "#0cb745")
   .attr("class", "legend")
-  .text("blah");
+  .text("Respiratory Irritants");
 
 /*
 var svg_bar = d3.select("body").append("svg")
@@ -517,16 +524,31 @@ var lines3 = svg.append("g")
     .style("opacity", 0)
     .call(d3.axisLeft(yScale3)); // Create an axis component with d3.axisLeft
 
+//var count = 10;
 //var ind = 0;
 setInterval(function () {
-    dataset[dataset.length] = {"y": Math.random()};
-    dataset2[dataset2.length] = {"y": Math.random()};
-    dataset3[dataset3.length] = {"y": Math.random()};
-    update(dataset, dataset2, dataset3, 0, dataset.length - 1)
-}, 2000)
+    $.get( "https://air-quality-195519.appspot.com/getalldata", function( data ) {
+    
+      var data_json = JSON.parse(data);
+      console.log(data_json)
+
+      for (i = 0; i < 20; i++) {
+       dataset[19 - i] = {"y" : data_json[i]["co2"]};
+       dataset2[19 - i] = {"y" : data_json[i]["carbonmonoxide"]};
+       dataset3[19 - i] = {"y" : data_json[i]["respiratoryirritants"]};
+      } 
+
+      //count ++;
+    // dataset[dataset.length] = {"y": Math.random()};
+    // dataset2[dataset2.length] = {"y": Math.random()};
+    // dataset3[dataset3.length] = {"y": Math.random()};
+    update(dataset, dataset2, dataset3, 0, 19);
+
+    //console.log(dataset)  
+    });
+}, 6000)
 //update(dataset);
 //setTimeout(update(dataset), 2000);
-
 
 function update(dset, dset2, dset3, start_ind, end_ind) {
 

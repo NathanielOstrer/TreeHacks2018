@@ -217,17 +217,20 @@ def insert_data():
 @app.route('/getalldata')
 def get_data():
 	# create a query for 'aqi' objects
-	query = db.GqlQuery('SELECT *')
+    query = aqi.all()
+
+    query.order('-datetime')
+
 
 	# get all objects in query
-	results = query.run(batch_size=1000)
+    results = query.fetch(25)
 
-	result_list = list(results)
+    result_list = list(results)
 
-	maps = [{'carbonmonoxide': res.carbonmonoxide, 'co2': res.co2, 'respiratoryirritants': res.respiratoryirritants, 'location': res.location, 'datetime':res.datetime} for res in result_list]
+    maps = [{'carbonmonoxide': res.carbonmonoxide, 'co2': res.co2, 'respiratoryirritants': res.respiratoryirritants, 'location': res.location, 'datetime':res.datetime} for res in result_list]
 
 	# return the aqi entities as a list put into a json object
-	return json.dumps(maps)
+    return json.dumps(maps)
 
 @app.errorhandler(500)
 def server_error(e):
